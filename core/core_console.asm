@@ -32,23 +32,23 @@ console_initialize proc
 	FUNCTION_PROLOGUE
 
 	; Get original code page identifier
-	sub rsp, 28h ; Allocate shadow space and align stack
+	CALL_PROLOGUE_IMM 0h
 	call GetConsoleOutputCP
 	mov qword ptr [g_console_orig_code_page_ident], rax ; Store original code page identifier
-	add rsp, 28h ; Restore stack
+	CALL_EPILOGUE_IMM 0h
 
 	; Set desired code page identifier
-	sub rsp, 28h ; Allocate shadow space and align stack
-	mov rcx, CP_UTF8 ; ; [ARG0] wCodePageID
+	CALL_PROLOGUE_IMM 0h
+	mov rcx, CP_UTF8 ; [ARG0] wCodePageID
 	call SetConsoleOutputCP
-	add rsp, 28h ; Restore stack
+	CALL_EPILOGUE_IMM 0h
 
 	; Get standard output handle
-	sub rsp, 28h ; Allocate shadow space and align stack
+	CALL_PROLOGUE_IMM 0h
 	mov rcx, STD_OUTPUT_HANDLE ; [ARG0] nStdHandle
 	call GetStdHandle
 	mov qword ptr [g_console_standard_output], rax ; Store console handle
-	add rsp, 28h ; Restore stack
+	CALL_EPILOGUE_IMM 0h
 
 	FUNCTION_EPILOGUE
 
@@ -63,7 +63,6 @@ console_log proc
 
 	FUNCTION_PROLOGUE
 
-	; TODO: args -> shadow space
 	mov rbx, rcx ; Temporary to hold format string
 	mov rdi, rdx ; Temporary to hold num args
 
@@ -71,14 +70,13 @@ console_log proc
 	shl rdi, 3 ; Multiply by 8, since this is an offset
 
 	; Prepare snprintf register args
-	sub rsp, 38h ; Allocate shadow space and align stack
+	CALL_PROLOGUE_REG rdi
 	lea rcx, g_console_format_buffer ; [ARG0] buffer
 	mov rdx, 1000h ; [ARG1] count
 	mov r8, rbx ; [ARG2] format
-	; TODO: check if num args is greater 0
 	mov r9, qword ptr [rbp + 10h] ; [ARG3] variadic
 
-	; Variadic snprintf stack args
+	; Prepare snprintf stack args
 	mov rsi, 0 ; Offset for stack args
 	cmp rsi, rdi ; Compare offset
 	jge arg_loop_tail
@@ -93,16 +91,16 @@ arg_loop_tail:
 	; Call snprintf
 	call snprintf
 	mov qword ptr [g_console_format_length], rax ; Store format buffer length
-	add rsp, 38h ; Restore stack
+	CALL_EPILOGUE_REG rdi
 
 	; Write formatted output
-	sub rsp, 28h ; Allocate shadow space and align stack
+	CALL_PROLOGUE_IMM 0h
 	mov rcx, g_console_standard_output ; [ARG0] hConsoleOutput
 	lea rdx, g_console_format_buffer ; [ARG1] lpBuffer
 	mov r8, g_console_format_length ; [ARG2] nNumberOfCharsToWrite
 	xor r9, r9 ; [ARG3] lpNumberOfCharsWritten
 	call WriteConsoleA
-	add rsp, 28h ; Restore stack
+	CALL_EPILOGUE_IMM 0h
 
 	FUNCTION_EPILOGUE
 
@@ -118,10 +116,10 @@ console_restore proc
 	FUNCTION_PROLOGUE
 
 	; Restore original code page identifier
-	sub rsp, 28h ; Allocate shadow space and align stack
+	CALL_PROLOGUE_IMM 0h
 	lea rcx, g_console_orig_code_page_ident ; [ARG0] wCodePageID
 	call SetConsoleOutputCP
-	add rsp, 28h ; Restore stack
+	CALL_EPILOGUE_IMM 0h
 
 	FUNCTION_EPILOGUE
 

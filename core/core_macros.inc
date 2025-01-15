@@ -36,18 +36,31 @@ FUNCTION_EPILOGUE MACRO
 ENDM ; FUNCTION_EPILOGUE
 
 ; Macro to allocate stack shadow space, return address and arguments before a function call
-CALL_PROLOGUE MACRO size
+CALL_PROLOGUE_IMM MACRO imm
 	sub rsp, 28h
-	sub rsp, size
-	lea rsp, qword ptr [rsp + 10h - 1]
-	and rsp, NOT (10h - 1)
-ENDM ; CALL_PROLOGUE
+	sub rsp, imm
+	ALIGN_UP_REG rsp, 10h
+ENDM ; CALL_PROLOGUE_IMM
 
 ; Macro to restore stack shadow space, return address and arguments after a function call
-CALL_EPILOGUE MACRO size
+CALL_EPILOGUE_IMM MACRO imm
 	sub rsp, 28h
-	sub rsp, size
-	and rsp, NOT (10h - 1)
-ENDM ; CALL_EPILOGUE
+	sub rsp, imm
+	ALIGN_DOWN_REG rsp, 10h
+ENDM ; CALL_EPILOGUE_IMM
+
+; Macro to allocate stack shadow space, return address and arguments before a function call
+CALL_PROLOGUE_REG MACRO reg
+	sub rsp, 28h
+	sub rsp, reg
+	ALIGN_UP_REG rsp, 10h
+ENDM ; CALL_PROLOGUE_REG
+
+; Macro to restore stack shadow space, return address and arguments after a function call
+CALL_EPILOGUE_REG MACRO reg
+	sub rsp, 28h
+	sub rsp, reg
+	ALIGN_DOWN_REG rsp, 10h
+ENDM ; CALL_EPILOGUE_REG
 
 ENDIF ; __CORE_MACROS

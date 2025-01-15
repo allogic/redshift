@@ -1,3 +1,5 @@
+INCLUDE core_macros.inc
+
 INCLUDE engine_window.inc
 
 CS_VREDRAW EQU 1h
@@ -40,20 +42,20 @@ g_window_class_ex WNDCLASSEX {}
 
 .code
 
-window_proc proc
-	xor rax, rax ; Return 0
-	ret
-window_proc endp
-
 window_alloc proc
-	sub rsp, 28h ; Align stack to 16-byte boundary
+
+	FUNCTION_PROLOGUE
 
 	mov rbx, rcx ; Temporary to hold window title
 	lea rdi, window_proc ; Temporary to hold window proc
 
+	; Get first module handle
+	CALL_PROLOGUE_IMM 0h
 	xor rcx, rcx ; lpModuleName
 	call GetModuleHandleA
+	CALL_EPILOGUE_IMM 0h
 
+	; Fill out window class structure
 	mov dword ptr [g_window_class_ex.cbSize], SIZEOF WNDCLASSEX
 	mov dword ptr [g_window_class_ex.style], CS_VREDRAW OR CS_HREDRAW OR CS_OWNDC
 	mov qword ptr [g_window_class_ex.lpfnWndProc], rdi
@@ -67,14 +69,18 @@ window_alloc proc
 	mov qword ptr [g_window_class_ex.lpszClassName], rbx
 	mov qword ptr [g_window_class_ex.hIconSm], 0
 
+	; Register new window class
+	CALL_PROLOGUE_IMM 0h
 	lea rcx, g_window_class_ex ; unnamedParam1
 	call RegisterClassExA
+	CALL_EPILOGUE_IMM 0h
 
+	; Create new window
+	CALL_PROLOGUE_IMM 40h
 	xor rcx, rcx ; dwExStyle
 	mov rdx, rbx; lpClassName
 	mov r8, rbx; lpWindowName
 	mov r9, WS_OVERLAPPED OR WS_MAXIMIZEBOX OR WS_MINIMIZEBOX OR WS_THICKFRAME OR WS_SYSMENU OR WS_CAPTION OR WS_CLIPCHILDREN OR WS_CLIPSIBLINGS ; dwStyle
-	sub rsp, 64
 	mov dword ptr [rsp], 100 ; X
 	mov dword ptr [rsp + 8], 100 ; Y
 	mov dword ptr [rsp + 16], 1920 ; nWidth
@@ -85,14 +91,38 @@ window_alloc proc
 	mov qword ptr [rsp + 48], rax ; hInstance
 	mov qword ptr [rsp + 56], 0 ; lpParam
 	call CreateWindowExA
-	add rsp, 64
+	CALL_EPILOGUE_IMM 40h
 
-	add rsp, 28h ; Restore stack alignment
+	FUNCTION_EPILOGUE
+
 	ret
+
 window_alloc endp
 
 window_free proc
+
+	FUNCTION_PROLOGUE
+
+	; TODO
+
+	FUNCTION_EPILOGUE
+
 	ret
+
 window_free endp
+
+window_proc proc
+
+	FUNCTION_PROLOGUE
+
+	; TODO
+
+	FUNCTION_EPILOGUE
+
+	xor rax, rax ; Discard return
+
+	ret
+
+window_proc endp
 
 end

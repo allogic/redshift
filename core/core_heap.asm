@@ -15,8 +15,8 @@ extern VirtualFree : proc
 
 .data
 
-g_heap_size qword 0
-g_heap_leak_format_string byte "%zu not freed", 10, 0
+g_heap_size qword ?
+g_heap_leak_format_string byte "%zu bytes not freed", 10, 0
 
 .code
 
@@ -25,8 +25,12 @@ g_heap_leak_format_string byte "%zu not freed", 10, 0
 ;
 heap_initialize proc
 
+	FUNCTION_PROLOGUE
+
 	; Reset heap size
 	mov qword ptr [g_heap_size], 0
+
+	FUNCTION_EPILOGUE
 
 	ret
 
@@ -37,17 +41,21 @@ heap_initialize endp
 ;
 heap_alloc proc
 
-	sub rsp, 28h ; Align stack to 16-byte boundary
+	FUNCTION_PROLOGUE
 
 	mov rbx, rcx ; Temporary to hold block size
+
 	add rbx, SIZEOF qword ; Add block primitive size
 	ALIGN_UP_REG rbx, PAGE_SIZE ; Align size up to the nearest page boundary
 
+	; Alloc virtual block
+	CALL_PROLOGUE_IMM 0h
 	xor rcx, rcx ; [ARG0] lpAddress
 	mov rdx, rbx ; [ARG1] dwSize
 	mov r8, MEM_COMMIT OR MEM_RESERVE ; [ARG2] flAllocationType
 	mov r9, PAGE_READWRITE ; [ARG3] flProtect
 	call VirtualAlloc
+	CALL_EPILOGUE_IMM 0h
 
 IFDEF DEBUG
 	add g_heap_size, rbx ; Add block size to overall size
@@ -55,8 +63,7 @@ IFDEF DEBUG
 	add rax, SIZEOF qword ; Increment block past block size
 ENDIF ; DEBUG
 
-	add rsp, 28h ; Restore stack alignment
-	ret
+	FUNCTION_EPILOGUE
 
 heap_alloc endp
 
@@ -65,18 +72,21 @@ heap_alloc endp
 ;
 heap_free proc
 
-	sub rsp, 28h ; Align stack to 16-byte boundary
+	FUNCTION_PROLOGUE
+
+	; Free virtual block
+	CALL_PROLOGUE_IMM 0h
+	xor rdx, rdx ; [ARG1] dwSize
+	mov r8, MEM_RELEASE ; [ARG2] dwFreeType
+	call VirtualFree
+	CALL_EPILOGUE_IMM 0h
 
 IFDEF DEBUG
 	mov rbx, qword ptr [rcx - SIZEOF qword] ; Temporary to hold block size
 	sub g_heap_size, rbx ; Subtract block size from overall size
 ENDIF ; DEBUG
 
-	xor rdx, rdx ; [ARG1] dwSize
-	mov r8, MEM_RELEASE ; [ARG2] dwFreeType
-	call VirtualFree
-
-	add rsp, 28h ; Restore stack alignment
+	FUNCTION_EPILOGUE
 
 	ret
 
@@ -87,27 +97,24 @@ heap_free endp
 ;
 heap_validate proc
 
-	; Function prologue
-	push rbp
-	mov rbp, rsp
+	FUNCTION_PROLOGUE
 
 	; Check heap size
 	cmp g_heap_size, 0
-	; jz no_leak_found
+	jz no_leak_found
 
 	; Print leaked byte count
-	sub rsp, 30h ; Allocate shadow space and align stack
+	CALL_PROLOGUE_IMM 8h
 	lea rcx, g_heap_leak_format_string ; [ARG0] format
-	; TODO
-	lea rdx, g_heap_size ; [ARG1] arg0
+	mov rdx, 1 ; [ARG1] num_args
+	mov rax, g_heap_size
+	mov qword ptr [rsp], rax ; [ARG2] variadic
 	call console_log
-	add rsp, 30h ; Restore stack
-
-	; Function epilogue
-	mov rsp, rbp
-	pop rbp
+	CALL_EPILOGUE_IMM 8h
 
 no_leak_found:
+
+	FUNCTION_EPILOGUE
 
 	ret
 
