@@ -18,9 +18,15 @@
     <MASM Include="engine_main.asm">
       <Filter>Source Files</Filter>
     </MASM>
+    <MASM Include="engine_window.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
   </ItemGroup>
   <ItemGroup>
     <None Include="engine_main.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="engine_window.inc">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

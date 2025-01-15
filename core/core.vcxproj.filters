@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="core_vector.asm">
-      <Filter>Source Files</Filter>
-    </MASM>
     <MASM Include="core_heap.asm">
       <Filter>Source Files</Filter>
     </MASM>
@@ -26,13 +23,13 @@
     </MASM>
   </ItemGroup>
   <ItemGroup>
-    <None Include="core_vector.inc">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="core_heap.inc">
       <Filter>Header Files</Filter>
     </None>
     <None Include="core_console.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="core_macros.inc">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
