@@ -2,6 +2,8 @@ IFNDEF __CORE_CONSOLE
 
 __CORE_CONSOLE EQU 1
 
+.code
+
 ;
 ; Global API
 ;

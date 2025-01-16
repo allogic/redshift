@@ -2,6 +2,12 @@ IFNDEF __ENGINE_WINDOW
 
 __ENGINE_WINDOW EQU 1
 
+IFNDEF __ENGINE_WINDOW_IMPL
+
+	extern g_window_should_close : qword
+
+ENDIF ; __ENGINE_WINDOW_IMPL
+
 ;
 ; Global API
 ;

@@ -9,8 +9,6 @@ extern _CRT_INIT : proc
 
 .data
 
-g_window_title byte "Redshift", 0
-
 g_format_string_1 byte "first:%zu", 10, 0
 g_format_string_2 byte "first:%zu second:%zu", 10, 0
 g_format_string_3 byte "first:%zu second:%zu third:%zu", 10, 0
@@ -72,10 +70,20 @@ main proc
 	CALL_EPILOGUE_IMM 18h
 
 	; Create window
-	; CALL_PROLOGUE_IMM 0h
-	; lea rcx, g_window_title ; [ARG0] title
-	; call window_alloc
-	; CALL_EPILOGUE_IMM 0h
+	CALL_PROLOGUE_IMM 0h
+	call window_alloc
+	CALL_EPILOGUE_IMM 0h
+
+;main_loop_head:
+;	mov rsi, g_window_should_close
+;	cmp rsi, 0
+;	jz main_loop_head
+;main_loop_tail:
+
+	; Destroy window
+	CALL_PROLOGUE_IMM 0h
+	call window_free
+	CALL_EPILOGUE_IMM 0h
 
 	; Restore console
 	CALL_PROLOGUE_IMM 0h
