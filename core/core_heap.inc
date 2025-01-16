@@ -2,8 +2,6 @@ IFNDEF __CORE_HEAP
 
 __CORE_HEAP EQU 1
 
-.code
-
 ;
 ; Global API
 ;
