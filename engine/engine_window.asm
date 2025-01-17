@@ -239,19 +239,6 @@ window_destroy proc
 
 	FUNCTION_PROLOGUE
 
-	; Destroy window
-	; sub       rsp, 28h             ; Allocate shadow space and align stack
-	; mov       rcx, g_window_handle ; [ARG0] hWnd
-	; call      DestroyWindow        ; Destroy window
-	; add       rsp, 28h             ; Restore stack
-
-	; Unregister window class
-	; sub       rsp, 28h                      ; Allocate shadow space and align stack
-	; lea       rdx, g_window_class.hInstance ; [ARG1] hInstance
-	; lea       rcx, g_window_class_name      ; [ARG0] lpClassName
-	; call      UnregisterClassA              ; Unregister class
-	; add       rsp, 28h                      ; Restore stack
-
 	FUNCTION_EPILOGUE
 
 	ret
@@ -285,23 +272,20 @@ window_procedure proc hWin:qword, uMsg:dword, wParam:qword, lParam:qword
 	mov       rcx, r12       ; [ARG0] hWnd
 	call      DefWindowProcA ; Default window procedure
 	add       rsp, 28h       ; Restore stack
-
-	FUNCTION_EPILOGUE
-
-	ret
+	jmp       exit_procedure ; Exit procedure
 
 handle_destroy_msg:
 
 	mov       g_window_should_close, 1 ; Set window should close
 	xor       rax, rax                 ; Return 0
-
-	FUNCTION_EPILOGUE
-
-	ret
+	jmp       exit_procedure           ; Exit procedure
 
 handle_resize_msg:
 
-	xor       rax, rax ; Return 0
+	xor       rax, rax       ; Return 0
+	jmp       exit_procedure ; Exit procedure
+
+exit_procedure:
 
 	FUNCTION_EPILOGUE
 
