@@ -6,6 +6,13 @@ __ENGINE_MAIN EQU 1
 ; Global API
 ;
 
-main proto ; int(*)(void)
+engine_initialize proto
+engine_loop proto
+
+;
+; Entry Point
+;
+
+main proto argc:dword, argv:qword, envp:qword
 
 ENDIF ; __ENGINE_MAIN

@@ -12,13 +12,15 @@ ENDIF ; __ENGINE_WINDOW_IMPL
 ; Global API
 ;
 
-window_alloc proto ; void*(*)(char const* title, long long unsigned width, long long unsigned height)
-window_free proto ; void(*)(void* window)
+window_initialize proto
+window_create proto
+window_poll_events proto
+window_destroy proto
 
 ;
 ; Internal API
 ;
 
-window_proc proto ; long long unsigned(*)(void)
+window_procedure proto hWin:qword, uMsg:dword, wParam:qword, lParam:qword
 
 ENDIF ; __ENGINE_WINDOW

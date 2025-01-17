@@ -6,9 +6,9 @@ __CORE_HEAP EQU 1
 ; Global API
 ;
 
-heap_initialize proto ; void(*)(void)
-heap_alloc proto ; void*(*)(long long unsigned size)
-heap_free proto ; void(*)(void* block)
-heap_validate proto ; void(*)(void)
+heap_initialize proto
+heap_alloc proto block_size:qword
+heap_free proto block:qword
+heap_validate proto
 
 ENDIF ; __CORE_HEAP

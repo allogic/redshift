@@ -27,8 +27,7 @@ heap_initialize proc
 
 	FUNCTION_PROLOGUE
 
-	; Reset heap size
-	mov qword ptr [g_heap_size], 0
+	mov g_heap_size, 0 ; Reset heap size
 
 	FUNCTION_EPILOGUE
 
@@ -39,28 +38,28 @@ heap_initialize endp
 ;
 ; Heap Alloc
 ;
-heap_alloc proc
+heap_alloc proc block_size:qword
 
 	FUNCTION_PROLOGUE
 
 	mov rbx, rcx ; Temporary to hold block size
 
-	add rbx, SIZEOF qword ; Add block primitive size
+	add rbx, SIZEOF qword       ; Add block primitive size
 	ALIGN_UP_REG rbx, PAGE_SIZE ; Align size up to the nearest page boundary
 
 	; Alloc virtual block
 	CALL_PROLOGUE_IMM 0h
-	xor rcx, rcx ; [ARG0] lpAddress
-	mov rdx, rbx ; [ARG1] dwSize
+	xor rcx, rcx                      ; [ARG0] lpAddress
+	mov rdx, rbx                      ; [ARG1] dwSize
 	mov r8, MEM_COMMIT OR MEM_RESERVE ; [ARG2] flAllocationType
-	mov r9, PAGE_READWRITE ; [ARG3] flProtect
+	mov r9, PAGE_READWRITE            ; [ARG3] flProtect
 	call VirtualAlloc
 	CALL_EPILOGUE_IMM 0h
 
 IFDEF DEBUG
-	add g_heap_size, rbx ; Add block size to overall size
+	add g_heap_size, rbx     ; Add block size to overall size
 	mov qword ptr [rax], rbx ; Store block size in block
-	add rax, SIZEOF qword ; Increment block past block size
+	add rax, SIZEOF qword    ; Increment block past block size
 ENDIF ; DEBUG
 
 	FUNCTION_EPILOGUE
@@ -70,20 +69,20 @@ heap_alloc endp
 ;
 ; Heap Free
 ;
-heap_free proc
+heap_free proc block:qword
 
 	FUNCTION_PROLOGUE
 
 	; Free virtual block
 	CALL_PROLOGUE_IMM 0h
-	xor rdx, rdx ; [ARG1] dwSize
-	mov r8, MEM_RELEASE ; [ARG2] dwFreeType
+	xor rdx, rdx         ; [ARG1] dwSize
+	mov r8, MEM_RELEASE  ; [ARG2] dwFreeType
 	call VirtualFree
 	CALL_EPILOGUE_IMM 0h
 
 IFDEF DEBUG
 	mov rbx, qword ptr [rcx - SIZEOF qword] ; Temporary to hold block size
-	sub g_heap_size, rbx ; Subtract block size from overall size
+	sub g_heap_size, rbx                    ; Subtract block size from overall size
 ENDIF ; DEBUG
 
 	FUNCTION_EPILOGUE
@@ -106,9 +105,9 @@ heap_validate proc
 	; Print leaked byte count
 	CALL_PROLOGUE_IMM 8h
 	lea rcx, g_heap_leak_format_string ; [ARG0] format
-	mov rdx, 1 ; [ARG1] num_args
+	mov rdx, 1                         ; [ARG1] num_args
 	mov rax, g_heap_size
-	mov qword ptr [rsp], rax ; [ARG2] variadic
+	mov qword ptr [rsp], rax           ; [ARG2] variadic
 	call console_log
 	CALL_EPILOGUE_IMM 8h
 

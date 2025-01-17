@@ -9,30 +9,111 @@ extern _CRT_INIT : proc
 
 .data
 
+g_fld_ctrl   word  37Fh
+g_mxcsr_ctrl dword 1F80h
+
+; TODO
+g_format_string_0 byte "zero", 10, 0
 g_format_string_1 byte "first:%zu", 10, 0
 g_format_string_2 byte "first:%zu second:%zu", 10, 0
 g_format_string_3 byte "first:%zu second:%zu third:%zu", 10, 0
 
 .code
 
-main proc
+;
+; Engine Initialize
+;
+engine_initialize proc
+
+	FUNCTION_PROLOGUE
+
+	; Initialize heap
+	sub       rsp, 28h        ; Allocate shadow space and align stack
+	call      heap_initialize ; Initialize heap
+	add       rsp, 28h        ; Restore stack
+
+	; Initialize console
+	sub       rsp, 28h           ; Allocate shadow space and align stack
+	call      console_initialize ; Initialize console
+	add       rsp, 28h           ; Restore stack
+
+	; Initialize window
+	sub       rsp, 28h          ; Allocate shadow space and align stack
+	call      window_initialize ; Initialize window
+	add       rsp, 28h          ; Restore stack
+
+	; Create window
+	sub       rsp, 28h      ; Allocate shadow space and align stack
+	call      window_create ; Create window
+	add       rsp, 28h      ; Restore stack
+
+	; Engine loop
+	sub       rsp, 28h    ; Allocate shadow space and align stack
+	call      engine_loop ; Engine loop
+	add       rsp, 28h    ; Restore stack
+
+	; Destroy window
+	sub       rsp, 28h       ; Allocate shadow space and align stack
+	call      window_destroy ; Destroy window
+	add       rsp, 28h       ; Restore stack
+
+	; Restore console
+	sub       rsp, 28h        ; Allocate shadow space and align stack
+	call      console_restore ; Restore console
+	add       rsp, 28h        ; Restore stack
+
+	; Validate heap
+	sub       rsp, 28h      ; Allocate shadow space and align stack
+	call      heap_validate ; Validate heap
+	add       rsp, 28h      ; Restore stack
+
+	FUNCTION_EPILOGUE
+
+	ret
+
+engine_initialize endp
+
+;
+; Engine Loop
+;
+engine_loop proc
+
+	FUNCTION_PROLOGUE
+
+loop_head:
+
+	; Poll Events
+	sub       rsp, 28h           ; Allocate shadow space and align stack
+	call      window_poll_events ; Poll events
+	add       rsp, 28h           ; Restore stack
+
+	; Check if window has closed
+	cmp       g_window_should_close, 0 ; Compare window should close
+	je        loop_head                ; Continue loop if window should not close
+
+	FUNCTION_EPILOGUE
+
+	ret
+
+engine_loop endp
+
+;
+; Entry Point
+;
+main proc argc:dword, argv:qword, envp:qword
 
 	FUNCTION_PROLOGUE
 
 	; Initialize C Run-Time
-	CALL_PROLOGUE_IMM 0h
-	call _CRT_INIT
-	CALL_EPILOGUE_IMM 0h
+	sub       rsp, 28h  ; Allocate shadow space and align stack
+	call      _CRT_INIT ; Initialize CRT
+	add       rsp, 28h  ; Restore stack
 
-	; Initialize heap
-	CALL_PROLOGUE_IMM 0h
-	call heap_initialize
-	CALL_EPILOGUE_IMM 0h
-
-	; Initialize console
-	CALL_PROLOGUE_IMM 0h
-	call console_initialize
-	CALL_EPILOGUE_IMM 0h
+	; Initialize FPU and MXCSR
+	lea       rcx, g_fld_ctrl   ; Default FPU control word
+	fldcw     [rcx]             ; Load FPU control word
+	lea       rdx, g_mxcsr_ctrl ; Default MXCSR control word
+	ldmxcsr   [rdx]             ; Load MXCSR control dword
 
 	; TODO
 	; mov rcx, 32 ; [ARG0] size
@@ -43,61 +124,47 @@ main proc
 	; call heap_free
 
 	; TODO
-	CALL_PROLOGUE_IMM 8h
-	lea rcx, g_format_string_1 ; [ARG0] format
-	mov rdx, 1 ; [ARG1] num_args
-	mov qword ptr [rsp], 42 ; [ARG2] variadic
-	call console_log
-	CALL_EPILOGUE_IMM 8h
+	sub       rsp, 28h               ; Allocate shadow space and align stack
+	mov       rdx, 0                 ; [ARG1] num_args
+	lea       rcx, g_format_string_0 ; [ARG0] format
+	call      console_log            ; Console log
+	add       rsp, 28h               ; Restore stack
 
 	; TODO
-	CALL_PROLOGUE_IMM 10h
-	lea rcx, g_format_string_2 ; [ARG0] format
-	mov rdx, 2 ; [ARG1] num_args
-	mov qword ptr [rsp], 42 ; [ARG2] variadic
-	mov qword ptr [rsp + 8h], 43 ; [ARG3] variadic
-	call console_log
-	CALL_EPILOGUE_IMM 10h
+	sub       rsp, 28h               ; Allocate shadow space and align stack
+	push      42                     ; [ARG4] variadic
+	mov       rdx, 1                 ; [ARG1] num_args
+	lea       rcx, g_format_string_1 ; [ARG0] format
+	call      console_log            ; Console log
+	add       rsp, 28h               ; Restore stack
 
 	; TODO
-	CALL_PROLOGUE_IMM 18h
-	lea rcx, g_format_string_3 ; [ARG0] format
-	mov rdx, 3 ; [ARG1] num_args
-	mov qword ptr [rsp], 42 ; [ARG2] variadic
-	mov qword ptr [rsp + 8h], 43 ; [ARG3] variadic
-	mov qword ptr [rsp + 10h], 44 ; [ARG4] variadic
-	call console_log
-	CALL_EPILOGUE_IMM 18h
+	sub       rsp, 28h               ; Allocate shadow space and align stack
+	push      43                     ; [ARG5] variadic
+	push      42                     ; [ARG4] variadic
+	mov       rdx, 2                 ; [ARG1] num_args
+	lea       rcx, g_format_string_2 ; [ARG0] format
+	call      console_log            ; Console log
+	add       rsp, 28h               ; Restore stack
 
-	; Create window
-	CALL_PROLOGUE_IMM 0h
-	call window_alloc
-	CALL_EPILOGUE_IMM 0h
+	; TODO
+	sub       rsp, 28h               ; Allocate shadow space and align stack
+	push      44                     ; [ARG6] variadic
+	push      43                     ; [ARG5] variadic
+	push      42                     ; [ARG4] variadic
+	mov       rdx, 3                 ; [ARG1] num_args
+	lea       rcx, g_format_string_3 ; [ARG0] format
+	call      console_log            ; Console log
+	add       rsp, 28h               ; Restore stack
 
-;main_loop_head:
-;	mov rsi, g_window_should_close
-;	cmp rsi, 0
-;	jz main_loop_head
-;main_loop_tail:
-
-	; Destroy window
-	CALL_PROLOGUE_IMM 0h
-	call window_free
-	CALL_EPILOGUE_IMM 0h
-
-	; Restore console
-	CALL_PROLOGUE_IMM 0h
-	call console_restore
-	CALL_EPILOGUE_IMM 0h
-
-	; Validate heap
-	CALL_PROLOGUE_IMM 0h
-	call heap_validate
-	CALL_EPILOGUE_IMM 0h
+	; Initialize engine
+	sub       rsp, 28h          ; Allocate shadow space and align stack
+	call      engine_initialize ; Validate heap
+	add       rsp, 28h          ; Restore stack
 
 	FUNCTION_EPILOGUE
 
-	xor rax, rax ; Discard return
+	xor rax, rax ; Return 0
 
 	ret
 

@@ -6,8 +6,8 @@ __CORE_CONSOLE EQU 1
 ; Global API
 ;
 
-console_initialize proto ; void(*)(void)
-console_log proto ; void(*)(char const* format, long long unsigned num_args, ...)
-console_restore proto ; void(*)(void)
+console_initialize proto
+console_log proto format:qword, num_args:qword
+console_restore proto
 
 ENDIF ; __CORE_CONSOLE

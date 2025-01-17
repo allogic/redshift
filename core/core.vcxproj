@@ -112,6 +112,7 @@
     </Link>
     <MASM>
       <PreprocessorDefinitions>DEBUG</PreprocessorDefinitions>
+      <WarningLevel>2</WarningLevel>
     </MASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -129,6 +130,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <MASM>
+      <WarningLevel>2</WarningLevel>
+    </MASM>
   </ItemDefinitionGroup>
   <ItemGroup>
     <MASM Include="core_console.asm" />

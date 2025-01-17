@@ -128,10 +128,11 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <EntryPointSymbol>
       </EntryPointSymbol>
-      <AdditionalDependencies>kernel32.lib;msvcrt.lib;ucrt.lib;legacy_stdio_definitions.lib;core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;msvcrt.lib;ucrt.lib;legacy_stdio_definitions.lib;core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <MASM>
       <IncludePaths>$(SolutionDir)core;%(IncludePaths)</IncludePaths>
+      <WarningLevel>2</WarningLevel>
     </MASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -151,11 +152,12 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <EntryPointSymbol>
       </EntryPointSymbol>
-      <AdditionalDependencies>kernel32.lib;msvcrt.lib;ucrt.lib;legacy_stdio_definitions.lib;core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;msvcrt.lib;ucrt.lib;legacy_stdio_definitions.lib;core.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <MASM>
       <IncludePaths>$(SolutionDir)core;%(IncludePaths)</IncludePaths>
+      <WarningLevel>2</WarningLevel>
     </MASM>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
