@@ -135,11 +135,9 @@
     </MASM>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <MASM Include="core_console.asm" />
     <MASM Include="core_heap.asm" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="core_console.inc" />
     <None Include="core_heap.inc" />
     <None Include="core_macros.inc" />
   </ItemGroup>
