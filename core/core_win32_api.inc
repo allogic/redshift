@@ -41,22 +41,6 @@ WM_CREATE  EQU 1h
 WM_DESTROY EQU 2h
 WM_SIZE    EQU 5h
 
-extern VirtualAlloc     : proc
-extern VirtualFree      : proc
-extern GetModuleHandleA : proc
-extern RegisterClassExA : proc
-extern UnregisterClassA : proc
-extern DefWindowProcA   : proc
-extern CreateWindowExA  : proc
-extern PeekMessageA     : proc
-extern LoadCursorA      : proc
-extern LoadIconA        : proc
-extern TranslateMessage : proc
-extern DispatchMessageA : proc
-extern ShowWindow       : proc
-extern UpdateWindow     : proc
-extern DestroyWindow    : proc
-
 WNDCLASSEX struct
 	cbSize        dword 0
 	style         dword 0
@@ -86,5 +70,21 @@ MSG struct
 	pt       POINT <>
 	lPrivate dword 0
 MSG ends
+
+extern VirtualAlloc     : proc
+extern VirtualFree      : proc
+extern GetModuleHandleA : proc
+extern RegisterClassExA : proc
+extern UnregisterClassA : proc
+extern DefWindowProcA   : proc
+extern CreateWindowExA  : proc
+extern PeekMessageA     : proc
+extern LoadCursorA      : proc
+extern LoadIconA        : proc
+extern TranslateMessage : proc
+extern DispatchMessageA : proc
+extern ShowWindow       : proc
+extern UpdateWindow     : proc
+extern DestroyWindow    : proc
 
 ENDIF ; __CORE_WIN32_API
