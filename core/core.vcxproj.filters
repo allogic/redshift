@@ -23,7 +23,16 @@
     <None Include="core_heap.inc">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="core_macros.inc">
+    <None Include="core_common_macros.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="core_vulkan_api.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="core_win32_api.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="core_crt.inc">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

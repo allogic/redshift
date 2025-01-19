@@ -1,10 +1,9 @@
+INCLUDE core_common_macros.inc
+INCLUDE core_crt.inc
 INCLUDE core_heap.inc
-INCLUDE core_macros.inc
 
 INCLUDE engine_main.inc
-INCLUDE engine_window.inc
-
-extern _CRT_INIT : proc
+INCLUDE engine_context.inc
 
 .code
 
@@ -20,25 +19,20 @@ engine_initialize proc
 	call      heap_initialize ; Initialize heap
 	add       rsp, 20h        ; Restore stack
 
-	; Initialize window
-	sub       rsp, 20h          ; Allocate shadow space and align stack
-	call      window_initialize ; Initialize window
-	add       rsp, 20h          ; Restore stack
-
-	; Create window
-	sub       rsp, 20h      ; Allocate shadow space and align stack
-	call      window_create ; Create window
-	add       rsp, 20h      ; Restore stack
+	; Create context
+	sub       rsp, 20h       ; Allocate shadow space and align stack
+	call      context_create ; Create context
+	add       rsp, 20h       ; Restore stack
 
 	; Engine loop
 	sub       rsp, 20h    ; Allocate shadow space and align stack
 	call      engine_loop ; Engine loop
 	add       rsp, 20h    ; Restore stack
 
-	; Destroy window
-	sub       rsp, 20h       ; Allocate shadow space and align stack
-	call      window_destroy ; Destroy window
-	add       rsp, 20h       ; Restore stack
+	; Destroy context
+	sub       rsp, 20h        ; Allocate shadow space and align stack
+	call      context_destroy ; Destroy context
+	add       rsp, 20h        ; Restore stack
 
 	; Validate heap
 	sub       rsp, 20h      ; Allocate shadow space and align stack
@@ -73,9 +67,9 @@ engine_loop proc
 loop_head:
 
 	; Poll events
-	sub       rsp, 20h           ; Allocate shadow space and align stack
-	call      window_poll_events ; Poll events
-	add       rsp, 20h           ; Restore stack
+	sub       rsp, 20h            ; Allocate shadow space and align stack
+	call      context_poll_events ; Poll events
+	add       rsp, 20h            ; Restore stack
 
 	; Check if window has closed
 	cmp       g_window_should_close, 0 ; Compare window should close

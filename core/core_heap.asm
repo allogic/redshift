@@ -1,26 +1,15 @@
+INCLUDE core_common_macros.inc
+INCLUDE core_crt.inc
 INCLUDE core_heap.inc
-INCLUDE core_macros.inc
-
-PAGE_SIZE EQU 1000h
-
-MEM_COMMIT  EQU 1000h
-MEM_RESERVE EQU 2000h
-MEM_RELEASE EQU 8000h
-
-PAGE_READWRITE EQU 4h
-
-extern printf : proc
-
-extern VirtualAlloc : proc
-extern VirtualFree  : proc
+INCLUDE core_win32_api.inc
 
 .data
 
-align 4h
+ALIGN 4h
 g_heap_size qword 0
 
-align 4h
-g_heap_leak_format_string byte "%zu bytes not freed", 10, 0
+ALIGN 4h
+g_leak_format_string byte "%zu bytes not freed", 10, 0
 
 .code
 
@@ -84,8 +73,13 @@ heap_free proc block:qword
 
 	FUNCTION_PROLOGUE
 
-	mov       r12, rcx                            ; Store block into temporary
+	mov       r12, rcx ; Store block into temporary
+
+IFDEF __DEBUG
+
 	mov       r13, qword ptr [r12 - SIZEOF qword] ; Store block size into temporary
+
+ENDIF ; __DEBUG
 
 	; Free virtual block
 	mov       r8, MEM_RELEASE ; [ARG2] dwFreeType
@@ -119,11 +113,11 @@ heap_validate proc
 	je        no_leak_found  ; Jump to end if no leak was found
 
 	; Print leaked byte count
-	mov       rdx, g_heap_size               ; [ARG1] variadic
-	lea       rcx, g_heap_leak_format_string ; [ARG0] format
-	sub       rsp, 20h                       ; Allocate shadow space and align stack
-	call      printf                         ; Print formatted
-	add       rsp, 20h                       ; Restore stack
+	mov       rdx, g_heap_size          ; [ARG1] variadic
+	lea       rcx, g_leak_format_string ; [ARG0] format
+	sub       rsp, 20h                  ; Allocate shadow space and align stack
+	call      printf                    ; Print formatted
+	add       rsp, 20h                  ; Restore stack
 
 no_leak_found:
 

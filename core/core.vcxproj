@@ -114,6 +114,7 @@
       <PreprocessorDefinitions>__DEBUG</PreprocessorDefinitions>
       <WarningLevel>2</WarningLevel>
       <CallingConvention>0</CallingConvention>
+      <PackAlignmentBoundary>4</PackAlignmentBoundary>
     </MASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -134,14 +135,18 @@
     <MASM>
       <WarningLevel>2</WarningLevel>
       <CallingConvention>0</CallingConvention>
+      <PackAlignmentBoundary>4</PackAlignmentBoundary>
     </MASM>
   </ItemDefinitionGroup>
   <ItemGroup>
     <MASM Include="core_heap.asm" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="core_crt.inc" />
     <None Include="core_heap.inc" />
-    <None Include="core_macros.inc" />
+    <None Include="core_common_macros.inc" />
+    <None Include="core_vulkan_api.inc" />
+    <None Include="core_win32_api.inc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

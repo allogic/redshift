@@ -18,7 +18,7 @@
     <MASM Include="engine_main.asm">
       <Filter>Source Files</Filter>
     </MASM>
-    <MASM Include="engine_window.asm">
+    <MASM Include="engine_context.asm">
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>
@@ -26,7 +26,7 @@
     <None Include="engine_main.inc">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="engine_window.inc">
+    <None Include="engine_context.inc">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
