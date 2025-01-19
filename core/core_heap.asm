@@ -16,8 +16,11 @@ extern VirtualFree  : proc
 
 .data
 
-g_heap_size               qword 0
-g_heap_leak_format_string byte  "%zu bytes not freed", 10, 0
+align 4h
+g_heap_size qword 0
+
+align 4h
+g_heap_leak_format_string byte "%zu bytes not freed", 10, 0
 
 .code
 
@@ -44,30 +47,29 @@ heap_alloc proc block_size:qword
 
 	FUNCTION_PROLOGUE
 
-	; Temporary variables
-	mov       r12, rcx ; Temporary to hold block size
+	mov       r12, rcx ; Store block size into temporary
 
 	; Compute number of bytes to allocate
 	add       r12, SIZEOF qword ; Add block primitive size
 	ALIGN_UR  r12, PAGE_SIZE    ; Align size up to the nearest page boundary
 
 	; Alloc virtual block
-	sub       rsp, 28h                      ; Allocate shadow space and align stack
 	mov       r9, PAGE_READWRITE            ; [ARG3] flProtect
 	mov       r8, MEM_COMMIT OR MEM_RESERVE ; [ARG2] flAllocationType
 	mov       rdx, r12                      ; [ARG1] dwSize
 	xor       rcx, rcx                      ; [ARG0] lpAddress
+	sub       rsp, 20h                      ; Allocate shadow space and align stack
 	call      VirtualAlloc                  ; Virtual alloc
-	add       rsp, 28h                      ; Restore stack
+	add       rsp, 20h                      ; Restore stack
 
-IFDEF DEBUG
+IFDEF __DEBUG
 
-	; Store heap size
+	; Update overall heap size and store block size into block
 	add       g_heap_size, r12     ; Add block size to overall size
 	mov       qword ptr [rax], r12 ; Store block size in block
 	add       rax, SIZEOF qword    ; Increment block past block size
 
-ENDIF ; DEBUG
+ENDIF ; __DEBUG
 
 	FUNCTION_EPILOGUE
 
@@ -82,24 +84,22 @@ heap_free proc block:qword
 
 	FUNCTION_PROLOGUE
 
-	; Temporary variables
-	mov       r12, rcx                            ; Temporary to hold block
-	mov       r13, qword ptr [r12 - SIZEOF qword] ; Temporary to hold block size
+	mov       r12, rcx                            ; Store block into temporary
+	mov       r13, qword ptr [r12 - SIZEOF qword] ; Store block size into temporary
 
 	; Free virtual block
-	sub       rsp, 28h        ; Allocate shadow space and align stack
 	mov       r8, MEM_RELEASE ; [ARG2] dwFreeType
 	xor       rdx, rdx        ; [ARG1] dwSize
 	mov       rcx, r12        ; [ARG0] lpAddress
+	sub       rsp, 20h        ; Allocate shadow space and align stack
 	call      VirtualFree     ; Virtual free
-	add       rsp, 28h        ; Restore stack
+	add       rsp, 20h        ; Restore stack
 
-IFDEF DEBUG
+IFDEF __DEBUG
 
-	; Restore heap size
-	sub       g_heap_size, r13 ; Subtract block size from overall size
+	sub       g_heap_size, r13 ; Restore heap size
 
-ENDIF ; DEBUG
+ENDIF ; __DEBUG
 
 	FUNCTION_EPILOGUE
 
@@ -119,11 +119,11 @@ heap_validate proc
 	je        no_leak_found  ; Jump to end if no leak was found
 
 	; Print leaked byte count
-	sub       rsp, 28h                       ; Allocate shadow space and align stack
 	mov       rdx, g_heap_size               ; [ARG1] variadic
 	lea       rcx, g_heap_leak_format_string ; [ARG0] format
+	sub       rsp, 20h                       ; Allocate shadow space and align stack
 	call      printf                         ; Print formatted
-	add       rsp, 28h                       ; Restore stack
+	add       rsp, 20h                       ; Restore stack
 
 no_leak_found:
 

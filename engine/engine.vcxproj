@@ -133,6 +133,8 @@
     <MASM>
       <IncludePaths>$(SolutionDir)core;%(IncludePaths)</IncludePaths>
       <WarningLevel>2</WarningLevel>
+      <PreprocessorDefinitions>__DEBUG</PreprocessorDefinitions>
+      <CallingConvention>0</CallingConvention>
     </MASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -158,6 +160,7 @@
     <MASM>
       <IncludePaths>$(SolutionDir)core;%(IncludePaths)</IncludePaths>
       <WarningLevel>2</WarningLevel>
+      <CallingConvention>0</CallingConvention>
     </MASM>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

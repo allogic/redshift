@@ -15,37 +15,35 @@ engine_initialize proc
 
 	FUNCTION_PROLOGUE
 
-	; Allocate shadow space
-	sub       rsp, 20h
-
 	; Initialize heap
+	sub       rsp, 20h        ; Allocate shadow space and align stack
 	call      heap_initialize ; Initialize heap
-
-	; TODO
-	mov       rcx, 32    ; [ARG0] block_size
-	call      heap_alloc ; Heap alloc
-
-	; TODO
-	mov       rcx, rax  ; [ARG0] block
-	call      heap_free ; Heap free
+	add       rsp, 20h        ; Restore stack
 
 	; Initialize window
+	sub       rsp, 20h          ; Allocate shadow space and align stack
 	call      window_initialize ; Initialize window
+	add       rsp, 20h          ; Restore stack
 
 	; Create window
+	sub       rsp, 20h      ; Allocate shadow space and align stack
 	call      window_create ; Create window
+	add       rsp, 20h      ; Restore stack
 
 	; Engine loop
+	sub       rsp, 20h    ; Allocate shadow space and align stack
 	call      engine_loop ; Engine loop
+	add       rsp, 20h    ; Restore stack
 
 	; Destroy window
+	sub       rsp, 20h       ; Allocate shadow space and align stack
 	call      window_destroy ; Destroy window
+	add       rsp, 20h       ; Restore stack
 
 	; Validate heap
+	sub       rsp, 20h      ; Allocate shadow space and align stack
 	call      heap_validate ; Validate heap
-
-	; Restore stack
-	add       rsp, 28h
+	add       rsp, 20h      ; Restore stack
 
 	FUNCTION_EPILOGUE
 
@@ -60,22 +58,30 @@ engine_loop proc
 
 	FUNCTION_PROLOGUE
 
-	; Allocate shadow space
-	sub       rsp, 20h
+	; TODO
+	mov       rcx, 100h  ; [ARG0] block_size
+	sub       rsp, 20h   ; Allocate shadow space and align stack
+	call      heap_alloc ; Heap alloc
+	add       rsp, 20h   ; Restore stack
+
+	; TODO
+	mov       rcx, rax  ; [ARG0] block
+	sub       rsp, 20h  ; Allocate shadow space and align stack
+	call      heap_free ; Heap free
+	add       rsp, 20h  ; Restore stack
 
 loop_head:
 
-	; Poll Events
+	; Poll events
+	sub       rsp, 20h           ; Allocate shadow space and align stack
 	call      window_poll_events ; Poll events
+	add       rsp, 20h           ; Restore stack
 
 	; Check if window has closed
 	cmp       g_window_should_close, 0 ; Compare window should close
 	je        loop_head                ; Continue loop if window should not close
 
 loop_tail:
-
-	; Restore stack
-	add       rsp, 28h
 
 	FUNCTION_EPILOGUE
 
@@ -88,21 +94,15 @@ engine_loop endp
 ;
 main proc argc:dword, argv:qword, envp:qword
 
-	FUNCTION_PROLOGUE
-
-	; Allocate shadow space
-	sub       rsp, 20h
-
 	; Initialize CRT
+	sub       rsp, 20h  ; Allocate shadow space and align stack
 	call      _CRT_INIT ; Initialize CRT
+	add       rsp, 20h  ; Restore stack
 
 	; Initialize engine
+	sub       rsp, 20h          ; Allocate shadow space and align stack
 	call      engine_initialize ; Initialize engine
-
-	; Restore stack
-	add       rsp, 28h
-
-	FUNCTION_EPILOGUE
+	add       rsp, 20h          ; Restore stack
 
 	xor rax, rax ; Return 0
 

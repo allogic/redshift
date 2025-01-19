@@ -80,12 +80,23 @@ MSG ends
 
 .data
 
-g_window_name         byte       "Redshift", 0
-g_window_class_name   byte       "RedshiftClass", 0
-g_window_class        WNDCLASSEX <>
-g_window_message      MSG        <>
-g_window_handle       qword      0
-g_window_should_close qword      0
+align 4h
+g_window_name byte "Redshift", 0
+
+align 4h
+g_window_class_name byte "RedshiftClass", 0
+
+align 4h
+g_window_class WNDCLASSEX <>
+
+align 4h
+g_window_message MSG <>
+
+align 4h
+g_window_handle qword 0
+
+align 4h
+g_window_should_close qword 0
 
 public g_window_should_close
 
@@ -98,31 +109,30 @@ window_initialize proc
 
 	FUNCTION_PROLOGUE
 
-	; Temporary variables
-	lea       r12, g_window_class_name ; Temporary to hold window class name
-	lea       r13, window_procedure    ; Temporary to hold window proc
+	lea       r12, g_window_class_name ; Store window class name into temporary
+	lea       r13, window_procedure    ; Store window proc into temporary
 
 	; Get first module instance
-	sub       rsp, 28h                      ; Allocate shadow space and align stack
 	xor       rcx, rcx                      ; [ARG0] lpModuleName
+	sub       rsp, 20h                      ; Allocate shadow space and align stack
 	call      GetModuleHandleA              ; Get module handle
-	add       rsp, 28h                      ; Restore stack
+	add       rsp, 20h                      ; Restore stack
 	mov       g_window_class.hInstance, rax ; Store module instance
 
 	; Load cursor
-	sub       rsp, 28h                    ; Allocate shadow space and align stack
 	mov       rdx, IDC_ARROW              ; [ARG1] lpCursorName
 	xor       rcx, rcx                    ; [ARG0] hInstance
+	sub       rsp, 20h                    ; Allocate shadow space and align stack
 	call      LoadCursorA                 ; Load cursor
-	add       rsp, 28h                    ; Restore stack
+	add       rsp, 20h                    ; Restore stack
 	mov       g_window_class.hCursor, rax ; Store cursor
 
 	; Load icon
-	sub       rsp, 28h                    ; Allocate shadow space and align stack
 	mov       rdx, IDI_APPLICATION        ; [ARG1] lpIconName
 	xor       rcx, rcx                    ; [ARG0] hInstance
+	sub       rsp, 20h                    ; Allocate shadow space and align stack
 	call      LoadIconA                   ; Load icon
-	add       rsp, 28h                    ; Restore stack
+	add       rsp, 20h                    ; Restore stack
 	mov       g_window_class.hIconSm, rax ; Store icon
 	mov       g_window_class.hIcon, rax   ; Store icon
 
@@ -137,10 +147,10 @@ window_initialize proc
 	mov       g_window_class.lpszClassName, r12
 
 	; Register window class
-	sub       rsp, 28h            ; Allocate shadow space and align stack
 	lea       rcx, g_window_class ; [ARG0] unnamedParam1
+	sub       rsp, 20h            ; Allocate shadow space and align stack
 	call      RegisterClassExA    ; Register class
-	add       rsp, 28h            ; Restore stack
+	add       rsp, 20h            ; Restore stack
 
 	FUNCTION_EPILOGUE
 
@@ -156,7 +166,6 @@ window_create proc
 	FUNCTION_PROLOGUE
 
 	; Create window
-	sub       rsp, 8h                  ; Align stack
 	push      0                        ; [ARG11] lpParam
 	push      g_window_class.hInstance ; [ARG10] hInstance
 	push      0                        ; [ARG9] hMenu
@@ -165,27 +174,27 @@ window_create proc
 	push      1920                     ; [ARG6] nWidth
 	push      CW_USEDEFAULT            ; [ARG5] Y
 	push      CW_USEDEFAULT            ; [ARG4] X
-	sub       rsp, 20h                 ; Allocate shadow space
 	mov       r9, WS_DEFAULT           ; [ARG3] dwStyle
 	lea       r8, g_window_name        ; [ARG2] lpWindowName
 	lea       rdx, g_window_class_name ; [ARG1] lpClassName
 	xor       rcx, rcx                 ; [ARG0] dwExStyle
+	sub       rsp, 20h                 ; Allocate shadow space and align stack
 	call      CreateWindowExA          ; Create window
-	add       rsp, 68h                 ; Restore stack
+	add       rsp, 60h                 ; Restore stack
 	mov       g_window_handle, rax     ; Store window handle
 
 	; Show window
-	sub       rsp, 28h             ; Allocate shadow space and align stack
 	mov       rdx, SW_SHOW         ; [ARG1] nCmdShow
 	mov       rcx, g_window_handle ; [ARG0] hWnd
+	sub       rsp, 20h             ; Allocate shadow space and align stack
 	call      ShowWindow           ; Show window
-	add       rsp, 28h             ; Restore stack
+	add       rsp, 20h             ; Restore stack
 
 	; Update window
-	sub       rsp, 28h             ; Allocate shadow space and align stack
 	mov       rcx, g_window_handle ; [ARG0] hWnd
+	sub       rsp, 20h             ; Allocate shadow space and align stack
 	call      UpdateWindow         ; Update window
-	add       rsp, 28h             ; Restore stack
+	add       rsp, 20h             ; Restore stack
 
 	FUNCTION_EPILOGUE
 
@@ -202,27 +211,27 @@ window_poll_events proc
 
 	; Peek next message
 	push      PM_REMOVE             ; [ARG4] wRemoveMsg
-	sub       rsp, 20h              ; Allocate shadow space
 	xor       r9, r9                ; [ARG3] wMsgFilterMax
 	xor       r8, r8                ; [ARG2] wMsgFilterMin
 	xor       rdx, rdx              ; [ARG1] hWnd
 	lea       rcx, g_window_message ; [ARG0] lpMsg
+	sub       rsp, 20h              ; Allocate shadow space and align stack
 	call      PeekMessageA          ; Peak message
-	add       rsp, 28h              ; Restore stack
+	add       rsp, 20h              ; Restore stack
 	cmp       rax, 0                ; Check if message is available
 	je        no_message_available  ; Skip if no message is available
 
 	; Translate current message
-	sub       rsp, 28h              ; Allocate shadow space and align stack
 	lea       rcx, g_window_message ; [ARG0] lpMsg
+	sub       rsp, 20h              ; Allocate shadow space and align stack
 	call      TranslateMessage      ; Translate current message
-	add       rsp, 28h              ; Restore stack
+	add       rsp, 20h              ; Restore stack
 
 	; Dispatch current message
-	sub       rsp, 28h              ; Allocate shadow space and align stack
 	lea       rcx, g_window_message ; [ARG0] lpMsg
+	sub       rsp, 20h              ; Allocate shadow space and align stack
 	call      DispatchMessageA      ; Dispatch current message
-	add       rsp, 28h              ; Restore stack
+	add       rsp, 20h              ; Restore stack
 
 no_message_available:
 
@@ -239,6 +248,19 @@ window_destroy proc
 
 	FUNCTION_PROLOGUE
 
+	; Destroy window
+	mov       rcx, g_window_handle ; [ARG0] hWnd
+	sub       rsp, 20h             ; Allocate shadow space and align stack
+	call      DestroyWindow        ; Destroy window
+	add       rsp, 20h             ; Restore stack
+
+	; Unregister window class
+	mov       rdx, g_window_handle     ; [ARG1] hInstance
+	lea       rcx, g_window_class_name ; [ARG0] lpClassName
+	sub       rsp, 20h                 ; Allocate shadow space and align stack
+	call      UnregisterClassA         ; Unregister class
+	add       rsp, 20h                 ; Restore stack
+
 	FUNCTION_EPILOGUE
 
 	ret
@@ -250,13 +272,10 @@ window_destroy endp
 ;
 window_procedure proc hWin:qword, uMsg:dword, wParam:qword, lParam:qword
 
-	FUNCTION_PROLOGUE
-
-	; Temporary variables
-	mov       r12, rcx ; Temporary to hold window handle
-	mov       r13, rdx ; Temporary to hold message
-	mov       r14, r8  ; Temporary to hold wParam
-	mov       r15, r9  ; Temporary to hold lParam
+	mov       r12, rcx ; Store window handle into temporary
+	mov       r13, rdx ; Store message into temporary
+	mov       r14, r8  ; Store wParam into temporary
+	mov       r15, r9  ; Store lParam into temporary
 
 	; Switch message type
 	cmp       edx, WM_DESTROY
@@ -264,31 +283,27 @@ window_procedure proc hWin:qword, uMsg:dword, wParam:qword, lParam:qword
 	cmp       edx, WM_SIZE
 	je        handle_resize_msg
 
-	; Default window procedure
-	sub       rsp, 28h       ; Allocate shadow space and align stack
+	; Handle default window procedure
 	mov       r9, r15        ; [ARG3] lParam
 	mov       r8, r14        ; [ARG2] wParam
 	mov       rdx, r13       ; [ARG1] Msg
 	mov       rcx, r12       ; [ARG0] hWnd
+	sub       rsp, 20h       ; Allocate shadow space and align stack
 	call      DefWindowProcA ; Default window procedure
-	add       rsp, 28h       ; Restore stack
-	jmp       exit_procedure ; Exit procedure
+	add       rsp, 20h       ; Restore stack
+	ret
 
 handle_destroy_msg:
 
+	; Handle window destroy
 	mov       g_window_should_close, 1 ; Set window should close
 	xor       rax, rax                 ; Return 0
-	jmp       exit_procedure           ; Exit procedure
+	ret
 
 handle_resize_msg:
 
-	xor       rax, rax       ; Return 0
-	jmp       exit_procedure ; Exit procedure
-
-exit_procedure:
-
-	FUNCTION_EPILOGUE
-
+	; Handle window resize
+	xor       rax, rax ; Return 0
 	ret
 
 window_procedure endp

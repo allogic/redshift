@@ -111,8 +111,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <MASM>
-      <PreprocessorDefinitions>DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__DEBUG</PreprocessorDefinitions>
       <WarningLevel>2</WarningLevel>
+      <CallingConvention>0</CallingConvention>
     </MASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -132,6 +133,7 @@
     </Link>
     <MASM>
       <WarningLevel>2</WarningLevel>
+      <CallingConvention>0</CallingConvention>
     </MASM>
   </ItemDefinitionGroup>
   <ItemGroup>
