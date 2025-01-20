@@ -2,17 +2,17 @@ IFNDEF __ENGINE_MAIN
 
 __ENGINE_MAIN EQU 1
 
-;
-; Global API
-;
+; #################################################################
+; ### Global API
+; #################################################################
 
 engine_initialize proto
 engine_loop proto
 
-;
-; Entry Point
-;
+; #################################################################
+; ### Entry Point
+; #################################################################
 
-main proto argc:dword, argv:qword, envp:qword
+main proto
 
 ENDIF ; __ENGINE_MAIN

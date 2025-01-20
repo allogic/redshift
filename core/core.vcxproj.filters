@@ -35,5 +35,8 @@
     <None Include="core_crt.inc">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="core_tracy_api.inc">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

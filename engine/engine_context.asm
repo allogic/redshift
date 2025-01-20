@@ -1,5 +1,6 @@
 INCLUDE core_common_macros.inc
 INCLUDE core_crt.inc
+INCLUDE core_tracy_api.inc
 INCLUDE core_vulkan_api.inc
 INCLUDE core_win32_api.inc
 
@@ -121,20 +122,15 @@ g_vulkan_win32_surface_create_info_khr VkWin32SurfaceCreateInfoKHR <>
 ALIGN 4h
 g_vulkan_surface qword 0
 
-;
-; Public Variables
-;
-
 public g_window_should_close
 
 .code
 
-;
-; Context Create
-;
-context_create proc
+; #################################################################
+; ### Context Create
+; #################################################################
 
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION context_create, "context_create"
 
 	; Create win32 window
 	sub       rsp, 20h                    ; Allocate shadow space and align stack
@@ -151,18 +147,13 @@ context_create proc
 	call      context_create_vulkan_surface ; Create vulkan surface
 	add       rsp, 20h                      ; Restore stack
 
-	FUNCTION_EPILOGUE
+END_FUNCTION_DEFINITION context_create
 
-	ret
+; #################################################################
+; ### Context Poll Events
+; #################################################################
 
-context_create endp
-
-;
-; Context Poll Events
-;
-context_poll_events proc
-
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION context_poll_events, "context_poll_events"
 
 	; Peek next message
 	push      PM_REMOVE             ; [ARG4] wRemoveMsg
@@ -190,18 +181,13 @@ context_poll_events proc
 
 no_message_available:
 
-	FUNCTION_EPILOGUE
+END_FUNCTION_DEFINITION context_poll_events
 
-	ret
+; #################################################################
+; ### Context Destroy
+; #################################################################
 
-context_poll_events endp
-
-;
-; Context Destroy
-;
-context_destroy proc
-
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION context_destroy, "context_destroy"
 
 	; Destroy vulkan surface
 	sub       rsp, 20h                       ; Allocate shadow space and align stack
@@ -218,19 +204,13 @@ context_destroy proc
 	call      context_destroy_win32_window ; Destroy win32 window
 	add       rsp, 20h                     ; Restore stack
 
-	FUNCTION_EPILOGUE
+END_FUNCTION_DEFINITION context_destroy
 
-	ret
+; #################################################################
+; ### Context Create Win32 Window
+; #################################################################
 
-context_destroy endp
-
-;
-; Context Create Win32 Window
-;
-
-context_create_win32_window proc
-
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION context_create_win32_window, "context_create_win32_window"
 
 	lea       r12, g_window_class_name             ; Store window class name into temporary
 	lea       r13, context_win32_message_procedure ; Store window message proc into temporary
@@ -306,19 +286,13 @@ context_create_win32_window proc
 	call      UpdateWindow       ; Update window
 	add       rsp, 20h           ; Restore stack
 
-	FUNCTION_EPILOGUE
+END_FUNCTION_DEFINITION context_create_win32_window
 
-	ret
+; #################################################################
+; ### Context Create Vulkan Instance
+; #################################################################
 
-context_create_win32_window endp
-
-;
-; Context Create Vulkan Instance
-;
-
-context_create_vulkan_instance proc
-
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION context_create_vulkan_instance, "context_create_vulkan_instance"
 
 	lea       r12, g_vulkan_application_name ; Store application name into temporary
 	lea       r13, g_vulkan_engine_name      ; Store engine name into temporary
@@ -372,7 +346,7 @@ ENDIF ; __DEBUG
 IFDEF __DEBUG
 
 	; Get create debug utils messenger extension proc address
-	lea       rdx, g_vulkan_create_debug_utils_messenger_proc_name ; [ARG0] pName
+	lea       rdx, g_vulkan_create_debug_utils_messenger_proc_name ; [ARG1] pName
 	mov       rcx, g_vulkan_instance                               ; [ARG0] instance
 	sub       rsp, 20h                                             ; Allocate shadow space and align stack
 	call      vkGetInstanceProcAddr                                ; Get proc address
@@ -380,7 +354,7 @@ IFDEF __DEBUG
 	mov       g_vulkan_create_debug_utils_messenger_proc, rax      ; Store create debug utils messenger proc
 
 	; Get destroy debug utils messenger extension proc address
-	lea       rdx, g_vulkan_destroy_debug_utils_messenger_proc_name ; [ARG0] pName
+	lea       rdx, g_vulkan_destroy_debug_utils_messenger_proc_name ; [ARG1] pName
 	mov       rcx, g_vulkan_instance                                ; [ARG0] instance
 	sub       rsp, 20h                                              ; Allocate shadow space and align stack
 	call      vkGetInstanceProcAddr                                 ; Get proc address
@@ -398,18 +372,13 @@ IFDEF __DEBUG
 
 ENDIF ; __DEBUG
 
-	FUNCTION_EPILOGUE
+END_FUNCTION_DEFINITION context_create_vulkan_instance
 
-	ret
+; #################################################################
+; ### Context Create Vulkan Surface
+; #################################################################
 
-context_create_vulkan_instance endp
-
-;
-; Context Create Vulkan Surface
-;
-context_create_vulkan_surface proc
-
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION context_create_vulkan_surface, "context_create_vulkan_surface"
 
 	mov       r12, g_window_hwnd ; Store window hwnd into temporary
 	mov       r13, g_window_class.hInstance ; Store module instance into temporary
@@ -428,18 +397,13 @@ context_create_vulkan_surface proc
 	call      vkCreateWin32SurfaceKHR                     ; Create win32 surface
 	add       rsp, 20h                                    ; Restore stack
 
-	FUNCTION_EPILOGUE
+END_FUNCTION_DEFINITION context_create_vulkan_surface
 
-	ret
+; #################################################################
+; ### Context Destroy Win32 Window
+; #################################################################
 
-context_create_vulkan_surface endp
-
-;
-; Context Destroy Win32 Window
-;
-context_destroy_win32_window proc
-
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION context_destroy_win32_window, "context_destroy_win32_window"
 
 	; Destroy window
 	mov       rcx, g_window_hwnd ; [ARG0] hWnd
@@ -454,18 +418,13 @@ context_destroy_win32_window proc
 	call      UnregisterClassA         ; Unregister class
 	add       rsp, 20h                 ; Restore stack
 
-	FUNCTION_EPILOGUE
+END_FUNCTION_DEFINITION context_destroy_win32_window
 
-	ret
+; #################################################################
+; ### Context Destroy Vulkan Instance
+; #################################################################
 
-context_destroy_win32_window endp
-
-;
-; Context Destroy Vulkan Instance
-;
-context_destroy_vulkan_instance proc
-
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION context_destroy_vulkan_instance, "context_destroy_vulkan_instance"
 
 IFDEF __DEBUG
 
@@ -486,18 +445,13 @@ ENDIF ; __DEBUG
 	call      vkDestroyInstance      ; Destroy instance
 	add       rsp, 20h               ; Restore stack
 
-	FUNCTION_EPILOGUE
+END_FUNCTION_DEFINITION context_destroy_vulkan_instance
 
-	ret
+; #################################################################
+; ### Context Destroy Vulkan Surface
+; #################################################################
 
-context_destroy_vulkan_instance endp
-
-;
-; Context Destroy Vulkan Surface
-;
-context_destroy_vulkan_surface proc
-
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION context_destroy_vulkan_surface, "context_destroy_vulkan_surface"
 
 	; Destroy win32 surface
 	xor       r8, r8                 ; [ARG2] pAllocator
@@ -507,16 +461,18 @@ context_destroy_vulkan_surface proc
 	call      vkDestroySurfaceKHR    ; Destroy win32 surface
 	add       rsp, 20h               ; Restore stack
 
-	FUNCTION_EPILOGUE
+END_FUNCTION_DEFINITION context_destroy_vulkan_surface
 
-	ret
+; #################################################################
+; ### Context Win32 Message Procedure
+; #################################################################
 
-context_destroy_vulkan_surface endp
+context_win32_message_procedure proc
 
-;
-; Context Win32 Message Procedure
-;
-context_win32_message_procedure proc hWin:qword, uMsg:dword, wParam:qword, lParam:qword
+	FUNCTION_PROLOGUE
+
+	; TODO
+	; ALIGN_DR  rsp, 10h ; Align stack pointer
 
 	mov       r12, rcx ; Store window handle into temporary
 	mov       r13, rdx ; Store message into temporary
@@ -537,27 +493,39 @@ context_win32_message_procedure proc hWin:qword, uMsg:dword, wParam:qword, lPara
 	sub       rsp, 20h       ; Allocate shadow space and align stack
 	call      DefWindowProcA ; Default window procedure
 	add       rsp, 20h       ; Restore stack
-	ret
+	jmp       exit           ; Jump to clean exit
 
 handle_destroy_msg:
 
 	; Handle window destroy
 	mov       g_window_should_close, 1 ; Set window should close
 	xor       rax, rax                 ; Return 0
-	ret
+	jmp       exit                     ; Jump to clean exit
 
 handle_resize_msg:
 
 	; Handle window resize
 	xor       rax, rax ; Return 0
+	jmp       exit     ; Jump to clean exit
+
+exit:
+
+	FUNCTION_EPILOGUE
+
 	ret
 
 context_win32_message_procedure endp
 
-;
-; Context Vulkan Debug Procedure
-;
-context_vulkan_debug_procedure proc messageSeverity:dword, messageTypes:dword, pCallbackData:qword, pUserData:qword
+; #################################################################
+; ### Context Vulkan Debug Procedure
+; #################################################################
+
+context_vulkan_debug_procedure proc
+
+	FUNCTION_PROLOGUE
+
+	; TODO
+	; ALIGN_DR  rsp, 10h ; Align stack pointer
 
 	mov       r12, qword ptr [r8 + 28h] ; Store debug utils messenger callback message member into temporary
 
@@ -566,6 +534,8 @@ context_vulkan_debug_procedure proc messageSeverity:dword, messageTypes:dword, p
 	sub       rsp, 20h ; Allocate shadow space and align stack
 	call      printf   ; Print formatted
 	add       rsp, 20h ; Restore stack
+
+	FUNCTION_EPILOGUE
 
 	ret
 

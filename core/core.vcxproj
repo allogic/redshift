@@ -145,6 +145,7 @@
     <None Include="core_crt.inc" />
     <None Include="core_heap.inc" />
     <None Include="core_common_macros.inc" />
+    <None Include="core_tracy_api.inc" />
     <None Include="core_vulkan_api.inc" />
     <None Include="core_win32_api.inc" />
   </ItemGroup>

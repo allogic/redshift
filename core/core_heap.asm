@@ -1,6 +1,7 @@
 INCLUDE core_common_macros.inc
 INCLUDE core_crt.inc
 INCLUDE core_heap.inc
+INCLUDE core_tracy_api.inc
 INCLUDE core_win32_api.inc
 
 .data
@@ -13,28 +14,22 @@ g_leak_format_string byte "%zu bytes not freed", 10, 0
 
 .code
 
-;
-; Heap Initialize
-;
-heap_initialize proc
+; #################################################################
+; ### Heap Initialize
+; #################################################################
 
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION heap_initialize, "heap_initialize"
 
 	; Reset heap size
 	mov       g_heap_size, 0 ; Set allocated heap size back to 0
 
-	FUNCTION_EPILOGUE
+END_FUNCTION_DEFINITION heap_initialize
 
-	ret
+; #################################################################
+; ### Heap Alloc
+; #################################################################
 
-heap_initialize endp
-
-;
-; Heap Alloc
-;
-heap_alloc proc block_size:qword
-
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION heap_alloc, "heap_alloc"
 
 	mov       r12, rcx ; Store block size into temporary
 
@@ -60,18 +55,13 @@ IFDEF __DEBUG
 
 ENDIF ; __DEBUG
 
-	FUNCTION_EPILOGUE
+END_FUNCTION_DEFINITION heap_alloc
 
-	ret
+; #################################################################
+; ### Heap Free
+; #################################################################
 
-heap_alloc endp
-
-;
-; Heap Free
-;
-heap_free proc block:qword
-
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION heap_free, "heap_free"
 
 	mov       r12, rcx ; Store block into temporary
 
@@ -95,18 +85,13 @@ IFDEF __DEBUG
 
 ENDIF ; __DEBUG
 
-	FUNCTION_EPILOGUE
+END_FUNCTION_DEFINITION heap_free
 
-	ret
+; #################################################################
+; ### Heap Validate
+; #################################################################
 
-heap_free endp
-
-;
-; Heap Validate
-;
-heap_validate proc
-
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION heap_validate, "heap_validate"
 
 	; Check heap size
 	cmp       g_heap_size, 0 ; Compare allocated heap size
@@ -121,10 +106,6 @@ heap_validate proc
 
 no_leak_found:
 
-	FUNCTION_EPILOGUE
-
-	ret
-
-heap_validate endp
+END_FUNCTION_DEFINITION heap_validate
 
 end
