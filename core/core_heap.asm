@@ -1,5 +1,5 @@
 INCLUDE core_common_macros.inc
-INCLUDE core_crt.inc
+INCLUDE core_crt_api.inc
 INCLUDE core_heap.inc
 INCLUDE core_tracy_api.inc
 INCLUDE core_win32_api.inc

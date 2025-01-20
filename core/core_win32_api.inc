@@ -67,7 +67,7 @@ MSG struct
 	wParam   qword 0
 	lParam   qword 0
 	time     dword 0
-	pt       POINT <>
+	pt       POINT {}
 	lPrivate dword 0
 MSG ends
 

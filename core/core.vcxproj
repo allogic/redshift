@@ -142,7 +142,7 @@
     <MASM Include="core_heap.asm" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="core_crt.inc" />
+    <None Include="core_crt_api.inc" />
     <None Include="core_heap.inc" />
     <None Include="core_common_macros.inc" />
     <None Include="core_tracy_api.inc" />

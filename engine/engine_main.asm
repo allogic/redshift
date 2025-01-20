@@ -1,5 +1,5 @@
 INCLUDE core_common_macros.inc
-INCLUDE core_crt.inc
+INCLUDE core_crt_api.inc
 INCLUDE core_heap.inc
 INCLUDE core_tracy_api.inc
 
@@ -10,6 +10,12 @@ INCLUDE engine_context.inc
 
 ALIGN 4h
 g_main_thread_name byte "main_thread", 0
+
+ALIGN 4h
+g_tracy_zone_ctx ___tracy_c_zone_context {}
+
+ALIGN 4h
+g_tracy_src_loc_data ___tracy_source_location_data {}
 
 .code
 
@@ -97,7 +103,7 @@ main proc
 
 IFDEF __DEBUG
 
-	; Set main thread name for tracy
+	; Set tracy thread name
 	lea       rcx, g_main_thread_name  ; [ARG0] name
 	sub       rsp, 20h                 ; Allocate shadow space and align stack
 	call      ___tracy_set_thread_name ; Set thread name
@@ -105,11 +111,39 @@ IFDEF __DEBUG
 
 ENDIF ; __DEBUG
 
+	; TODO: only do this once!
+	; Fill tracy src location data
+	;mov       g_tracy_src_loc_data.loc_name, 0
+	;mov       g_tracy_src_loc_data.func_name, 0
+	;mov       g_tracy_src_loc_data.file_name, 0
+	;mov       g_tracy_src_loc_data.line_number, 666
+	;mov       g_tracy_src_loc_data.color, 88000000h
+
+	; Emit tracy zone begin
+	;mov       rdx, 1                       ; [ARG1] active
+	;lea       rcx, g_tracy_src_loc_data    ; [ARG0] srcloc
+	;sub       rsp, 20h                     ; Allocate shadow space and align stack
+	;call      ___tracy_emit_zone_begin     ; Emit tracy zone start
+	;add       rsp, 20h                     ; Restore stack
+	;mov       g_tracy_zone_ctx.id, eax     ; Store context id
+	;shr       rax, 20h                     ; Shift right to access the lower half
+	;mov       g_tracy_zone_ctx.active, eax ; Store context active
+
 	; Initialize engine
 	sub       rsp, 20h          ; Allocate shadow space and align stack
 	call      engine_initialize ; Initialize engine
 	add       rsp, 20h          ; Restore stack
 
+	; Emit tracy zone end
+	;xor       rcx, rcx                     ; Zero RCX
+	;mov       ecx, g_tracy_zone_ctx.active ; Set context active
+	;shl       rcx, 20h                     ; Shift id into upper half
+	;xor       ecx, g_tracy_zone_ctx.id     ; Set context id
+	;sub       rsp, 20h                     ; Allocate shadow space and align stack
+	;call      ___tracy_emit_zone_end       ; Emit tracy zone end
+	;add       rsp, 20h                     ; Restore stack
+
+	; Set return value
 	xor       rax, rax ; Return 0
 
 	FUNCTION_EPILOGUE

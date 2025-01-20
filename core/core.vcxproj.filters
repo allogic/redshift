@@ -32,7 +32,7 @@
     <None Include="core_win32_api.inc">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="core_crt.inc">
+    <None Include="core_crt_api.inc">
       <Filter>Header Files</Filter>
     </None>
     <None Include="core_tracy_api.inc">

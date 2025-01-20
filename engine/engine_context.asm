@@ -1,5 +1,5 @@
 INCLUDE core_common_macros.inc
-INCLUDE core_crt.inc
+INCLUDE core_crt_api.inc
 INCLUDE core_tracy_api.inc
 INCLUDE core_vulkan_api.inc
 INCLUDE core_win32_api.inc
@@ -19,10 +19,10 @@ ALIGN 4h
 g_window_class_name byte "RedshiftClass", 0
 
 ALIGN 4h
-g_window_class WNDCLASSEX <>
+g_window_class WNDCLASSEX {}
 
 ALIGN 4h
-g_window_message MSG <>
+g_window_message MSG {}
 
 ALIGN 4h
 g_window_hwnd qword 0
@@ -37,10 +37,10 @@ ALIGN 4h
 g_vulkan_engine_name byte "RedshiftEngine", 0
 
 ALIGN 4h
-g_vulkan_application_info VkApplicationInfo <>
+g_vulkan_application_info VkApplicationInfo {}
 
 ALIGN 4h
-g_vulkan_instance_create_info VkInstanceCreateInfo <>
+g_vulkan_instance_create_info VkInstanceCreateInfo {}
 
 ALIGN 4h
 g_vulkan_extension_layer_khr_surface byte "VK_KHR_surface", 0
@@ -77,7 +77,7 @@ ELSE
 ENDIF ; __DEBUG
 
 ALIGN 4h
-g_vulkan_debug_utils_messenger_create_info VkDebugUtilsMessengerCreateInfoEXT <>
+g_vulkan_debug_utils_messenger_create_info VkDebugUtilsMessengerCreateInfoEXT {}
 
 IFDEF __DEBUG
 
@@ -117,7 +117,7 @@ ALIGN 4h
 g_vulkan_instance qword 0
 
 ALIGN 4h
-g_vulkan_win32_surface_create_info_khr VkWin32SurfaceCreateInfoKHR <>
+g_vulkan_win32_surface_create_info_khr VkWin32SurfaceCreateInfoKHR {}
 
 ALIGN 4h
 g_vulkan_surface qword 0
