@@ -4,15 +4,15 @@ INCLUDE core_heap.inc
 INCLUDE core_tracy_api.inc
 INCLUDE core_win32_api.inc
 
-.data
+.DATA
 
 ALIGN 4h
-g_heap_size qword 0
+g_heap_size QWORD 0
 
 ALIGN 4h
-g_leak_format_string byte "%zu bytes not freed", 10, 0
+g_leak_format_string BYTE "%zu bytes not freed", 10, 0
 
-.code
+.CODE
 
 ; #################################################################
 ; ### Heap Initialize
@@ -34,7 +34,7 @@ BEGIN_FUNCTION_DEFINITION heap_alloc, "heap_alloc"
 	mov       r12, rcx ; Store block size into temporary
 
 	; Compute number of bytes to allocate
-	add       r12, SIZEOF qword ; Add block primitive size
+	add       r12, SIZEOF QWORD ; Add block primitive size
 	ALIGN_UR  r12, PAGE_SIZE    ; Align size up to the nearest page boundary
 
 	; Alloc virtual block
@@ -50,8 +50,8 @@ IFDEF __DEBUG
 
 	; Update overall heap size and store block size into block
 	add       g_heap_size, r12     ; Add block size to overall size
-	mov       qword ptr [rax], r12 ; Store block size in block
-	add       rax, SIZEOF qword    ; Increment block past block size
+	mov       QWORD PTR [rax], r12 ; Store block size in block
+	add       rax, SIZEOF QWORD    ; Increment block past block size
 
 ENDIF ; __DEBUG
 
@@ -67,7 +67,7 @@ BEGIN_FUNCTION_DEFINITION heap_free, "heap_free"
 
 IFDEF __DEBUG
 
-	mov       r13, qword ptr [r12 - SIZEOF qword] ; Store block size into temporary
+	mov       r13, QWORD PTR [r12 - SIZEOF QWORD] ; Store block size into temporary
 
 ENDIF ; __DEBUG
 

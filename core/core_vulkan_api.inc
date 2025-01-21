@@ -14,64 +14,64 @@ VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT     EQU 1h
 VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT  EQU 2h
 VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT EQU 4h
 
-VkApplicationInfo struct
-	sType              dword 0
-	pNext              qword 0
-	pApplicationName   qword 0
-	applicationVersion dword 0
-	pEngineName        qword 0
-	engineVersion      dword 0
-	apiVersion         dword 0
-VkApplicationInfo ends
+VkApplicationInfo STRUCT
+	sType              DWORD 0
+	pNext              QWORD 0
+	pApplicationName   QWORD 0
+	applicationVersion DWORD 0
+	pEngineName        QWORD 0
+	engineVersion      DWORD 0
+	apiVersion         DWORD 0
+VkApplicationInfo ENDS
 
-VkInstanceCreateInfo struct
-	sType                   dword 0
-	pNext                   qword 0
-	flags                   dword 0
-	pApplicationInfo        qword 0
-	enabledLayerCount       dword 0
-	ppEnabledLayerNames     qword 0
-	enabledExtensionCount   dword 0
-	ppEnabledExtensionNames qword 0
-VkInstanceCreateInfo ends
+VkInstanceCreateInfo STRUCT
+	sType                   DWORD 0
+	pNext                   QWORD 0
+	flags                   DWORD 0
+	pApplicationInfo        QWORD 0
+	enabledLayerCount       DWORD 0
+	ppEnabledLayerNames     QWORD 0
+	enabledExtensionCount   DWORD 0
+	ppEnabledExtensionNames QWORD 0
+VkInstanceCreateInfo ENDS
 
-VkDebugUtilsMessengerCreateInfoEXT struct
-	sType           dword 0
-	pNext           qword 0
-	flags           dword 0
-	messageSeverity dword 0
-	messageType     dword 0
-	pfnUserCallback qword 0
-	pUserData       qword 0
-VkDebugUtilsMessengerCreateInfoEXT ends
+VkDebugUtilsMessengerCreateInfoEXT STRUCT
+	sType           DWORD 0
+	pNext           QWORD 0
+	flags           DWORD 0
+	messageSeverity DWORD 0
+	messageType     DWORD 0
+	pfnUserCallback QWORD 0
+	pUserData       QWORD 0
+VkDebugUtilsMessengerCreateInfoEXT ENDS
 
-VkDebugUtilsMessengerCallbackDataEXT struct
-	sType            dword 0
-	pNext            qword 0
-	flags            dword 0
-	pMessageIdName   qword 0
-	messageIdNumber  dword 0
-	pMessage         qword 0
-	queueLabelCount  dword 0
-	pQueueLabels     qword 0
-	cmdBufLabelCount dword 0
-	pCmdBufLabels    qword 0
-	objectCount      dword 0
-	pObjects         qword 0
-VkDebugUtilsMessengerCallbackDataEXT ends
+VkDebugUtilsMessengerCallbackDataEXT STRUCT
+	sType            DWORD 0
+	pNext            QWORD 0
+	flags            DWORD 0
+	pMessageIdName   QWORD 0
+	messageIdNumber  DWORD 0
+	pMessage         QWORD 0
+	queueLabelCount  DWORD 0
+	pQueueLabels     QWORD 0
+	cmdBufLabelCount DWORD 0
+	pCmdBufLabels    QWORD 0
+	objectCount      DWORD 0
+	pObjects         QWORD 0
+VkDebugUtilsMessengerCallbackDataEXT ENDS
 
-VkWin32SurfaceCreateInfoKHR struct
-	sType     dword 0
-	pNext     qword 0
-	flags     dword 0
-	hinstance qword 0
-	hwnd      qword 0
-VkWin32SurfaceCreateInfoKHR ends
+VkWin32SurfaceCreateInfoKHR STRUCT
+	sType     DWORD 0
+	pNext     QWORD 0
+	flags     DWORD 0
+	hinstance QWORD 0
+	hwnd      QWORD 0
+VkWin32SurfaceCreateInfoKHR ENDS
 
-extern vkCreateInstance        : proc
-extern vkGetInstanceProcAddr   : proc
-extern vkCreateWin32SurfaceKHR : proc
-extern vkDestroySurfaceKHR     : proc
-extern vkDestroyInstance       : proc
+EXTERN vkCreateInstance        : PROC
+EXTERN vkGetInstanceProcAddr   : PROC
+EXTERN vkCreateWin32SurfaceKHR : PROC
+EXTERN vkDestroySurfaceKHR     : PROC
+EXTERN vkDestroyInstance       : PROC
 
 ENDIF ; __CORE_VULKAN_API

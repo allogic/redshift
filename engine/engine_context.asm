@@ -10,13 +10,13 @@ INCLUDE engine_context.inc
 WINDOW_WIDTH  EQU 1920
 WINDOW_HEIGHT EQU 1080
 
-.data
+.DATA
 
 ALIGN 4h
-g_window_name byte "Redshift", 0
+g_window_name BYTE "Redshift", 0
 
 ALIGN 4h
-g_window_class_name byte "RedshiftClass", 0
+g_window_class_name BYTE "RedshiftClass", 0
 
 ALIGN 4h
 g_window_class WNDCLASSEX {}
@@ -25,16 +25,16 @@ ALIGN 4h
 g_window_message MSG {}
 
 ALIGN 4h
-g_window_hwnd qword 0
+g_window_hwnd QWORD 0
 
 ALIGN 4h
-g_window_should_close qword 0
+g_window_should_close QWORD 0
 
 ALIGN 4h
-g_vulkan_application_name byte "RedshiftApplication", 0
+g_vulkan_application_name BYTE "RedshiftApplication", 0
 
 ALIGN 4h
-g_vulkan_engine_name byte "RedshiftEngine", 0
+g_vulkan_engine_name BYTE "RedshiftEngine", 0
 
 ALIGN 4h
 g_vulkan_application_info VkApplicationInfo {}
@@ -43,21 +43,21 @@ ALIGN 4h
 g_vulkan_instance_create_info VkInstanceCreateInfo {}
 
 ALIGN 4h
-g_vulkan_extension_layer_khr_surface byte "VK_KHR_surface", 0
+g_vulkan_extension_layer_khr_surface BYTE "VK_KHR_surface", 0
 
 ALIGN 4h
-g_vulkan_extension_layer_khr_win32_surface byte "VK_KHR_win32_surface", 0
+g_vulkan_extension_layer_khr_win32_surface BYTE "VK_KHR_win32_surface", 0
 
 IFDEF __DEBUG
 
 	ALIGN 4h
-	g_vulkan_extension_layer_ext_debug_utils byte "VK_EXT_debug_utils", 0
+	g_vulkan_extension_layer_ext_debug_utils BYTE "VK_EXT_debug_utils", 0
 
 	ALIGN 4h
-	g_vulkan_extension_layer_count qword 3h
+	g_vulkan_extension_layer_count QWORD 3h
 
 	ALIGN 4h
-	g_vulkan_extension_layers qword \
+	g_vulkan_extension_layers QWORD \
 		g_vulkan_extension_layer_khr_surface,
 		g_vulkan_extension_layer_khr_win32_surface,
 		g_vulkan_extension_layer_ext_debug_utils,
@@ -66,10 +66,10 @@ IFDEF __DEBUG
 ELSE
 
 	ALIGN 4h
-	g_vulkan_extension_layer_count qword 2h
+	g_vulkan_extension_layer_count QWORD 2h
 
 	ALIGN 4h
-	g_vulkan_extension_layers qword \
+	g_vulkan_extension_layers QWORD \
 		g_vulkan_extension_layer_khr_surface,
 		g_vulkan_extension_layer_khr_win32_surface,
 		0
@@ -82,13 +82,13 @@ g_vulkan_debug_utils_messenger_create_info VkDebugUtilsMessengerCreateInfoEXT {}
 IFDEF __DEBUG
 
 	ALIGN 4h
-	g_vulkan_validation_layer_khronos_validation byte "VK_LAYER_KHRONOS_validation", 0
+	g_vulkan_validation_layer_khronos_validation BYTE "VK_LAYER_KHRONOS_validation", 0
 
 	ALIGN 4h
-	g_vulkan_validation_layer_count qword 1h
+	g_vulkan_validation_layer_count QWORD 1h
 
 	ALIGN 4h
-	g_vulkan_validation_layers qword \
+	g_vulkan_validation_layers QWORD \
 		g_vulkan_validation_layer_khronos_validation,
 		0
 
@@ -97,34 +97,34 @@ ENDIF ; __DEBUG
 IFDEF __DEBUG
 
 	ALIGN 4h
-	g_vulkan_create_debug_utils_messenger_proc_name byte "vkCreateDebugUtilsMessengerEXT", 0
+	g_vulkan_create_debug_utils_messenger_proc_name BYTE "vkCreateDebugUtilsMessengerEXT", 0
 
 	ALIGN 4h
-	g_vulkan_destroy_debug_utils_messenger_proc_name byte "vkDestroyDebugUtilsMessengerEXT", 0
+	g_vulkan_destroy_debug_utils_messenger_proc_name BYTE "vkDestroyDebugUtilsMessengerEXT", 0
 
 	ALIGN 4h
-	g_vulkan_create_debug_utils_messenger_proc qword 0
+	g_vulkan_create_debug_utils_messenger_proc QWORD 0
 
 	ALIGN 4h
-	g_vulkan_destroy_debug_utils_messenger_proc qword 0
+	g_vulkan_destroy_debug_utils_messenger_proc QWORD 0
 
 	ALIGN 4h
-	g_vulkan_debug_utils_messenger qword 0
+	g_vulkan_debug_utils_messenger QWORD 0
 
 ENDIF ; __DEBUG
 
 ALIGN 4h
-g_vulkan_instance qword 0
+g_vulkan_instance QWORD 0
 
 ALIGN 4h
 g_vulkan_win32_surface_create_info_khr VkWin32SurfaceCreateInfoKHR {}
 
 ALIGN 4h
-g_vulkan_surface qword 0
+g_vulkan_surface QWORD 0
 
-public g_window_should_close
+PUBLIC g_window_should_close
 
-.code
+.CODE
 
 ; #################################################################
 ; ### Context Create
@@ -153,7 +153,11 @@ END_FUNCTION_DEFINITION context_create
 ; ### Context Poll Events
 ; #################################################################
 
-BEGIN_FUNCTION_DEFINITION context_poll_events, "context_poll_events"
+; TODO: Why cant this function be marked and zoned..?
+
+context_poll_events PROC
+
+	FUNCTION_PROLOGUE
 
 	; Peek next message
 	push      PM_REMOVE             ; [ARG4] wRemoveMsg
@@ -181,7 +185,11 @@ BEGIN_FUNCTION_DEFINITION context_poll_events, "context_poll_events"
 
 no_message_available:
 
-END_FUNCTION_DEFINITION context_poll_events
+	FUNCTION_EPILOGUE
+
+	ret
+
+context_poll_events ENDP
 
 ; #################################################################
 ; ### Context Destroy
@@ -467,12 +475,9 @@ END_FUNCTION_DEFINITION context_destroy_vulkan_surface
 ; ### Context Win32 Message Procedure
 ; #################################################################
 
-context_win32_message_procedure proc
+context_win32_message_procedure PROC
 
 	FUNCTION_PROLOGUE
-
-	; TODO
-	; ALIGN_DR  rsp, 10h ; Align stack pointer
 
 	mov       r12, rcx ; Store window handle into temporary
 	mov       r13, rdx ; Store message into temporary
@@ -514,20 +519,17 @@ exit:
 
 	ret
 
-context_win32_message_procedure endp
+context_win32_message_procedure ENDP
 
 ; #################################################################
 ; ### Context Vulkan Debug Procedure
 ; #################################################################
 
-context_vulkan_debug_procedure proc
+context_vulkan_debug_procedure PROC
 
 	FUNCTION_PROLOGUE
 
-	; TODO
-	; ALIGN_DR  rsp, 10h ; Align stack pointer
-
-	mov       r12, qword ptr [r8 + 28h] ; Store debug utils messenger callback message member into temporary
+	mov       r12, QWORD PTR [r8 + 28h] ; Store debug utils messenger callback message member into temporary
 
 	; Print vulkan debug message
 	mov       rcx, r12 ; [ARG0] format
@@ -539,6 +541,6 @@ context_vulkan_debug_procedure proc
 
 	ret
 
-context_vulkan_debug_procedure endp
+context_vulkan_debug_procedure ENDP
 
 end

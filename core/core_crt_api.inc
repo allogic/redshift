@@ -2,7 +2,9 @@ IFNDEF __CORE_CRT
 
 __CORE_CRT EQU 1
 
-extern _CRT_INIT : proc
-extern printf    : proc
+EXTERN _CRT_INIT : PROC
+EXTERN printf    : PROC
+EXTERN malloc    : PROC
+EXTERN free      : PROC
 
 ENDIF ; __CORE_CRT

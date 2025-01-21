@@ -6,13 +6,12 @@ __ENGINE_MAIN EQU 1
 ; ### Global API
 ; #################################################################
 
-engine_initialize proto
-engine_loop proto
+engine_loop PROTO
 
 ; #################################################################
 ; ### Entry Point
 ; #################################################################
 
-main proto
+main PROTO
 
 ENDIF ; __ENGINE_MAIN

@@ -41,50 +41,50 @@ WM_CREATE  EQU 1h
 WM_DESTROY EQU 2h
 WM_SIZE    EQU 5h
 
-WNDCLASSEX struct
-	cbSize        dword 0
-	style         dword 0
-	lpfnWndProc   qword 0
-	cbClsExtra    dword 0
-	cbWndExtra    dword 0
-	hInstance     qword 0
-	hIcon         qword 0
-	hCursor       qword 0
-	hbrBackground qword 0
-	lpszMenuName  qword 0
-	lpszClassName qword 0
-	hIconSm       qword 0
-WNDCLASSEX ends
+WNDCLASSEX STRUCT
+	cbSize        DWORD 0
+	style         DWORD 0
+	lpfnWndProc   QWORD 0
+	cbClsExtra    DWORD 0
+	cbWndExtra    DWORD 0
+	hInstance     QWORD 0
+	hIcon         QWORD 0
+	hCursor       QWORD 0
+	hbrBackground QWORD 0
+	lpszMenuName  QWORD 0
+	lpszClassName QWORD 0
+	hIconSm       QWORD 0
+WNDCLASSEX ENDS
 
-POINT struct
-	x qword 0
-	y qword 0
-POINT ends
+POINT STRUCT
+	x QWORD 0
+	y QWORD 0
+POINT ENDS
 
-MSG struct
-	hwnd     qword 0
-	message  dword 0
-	wParam   qword 0
-	lParam   qword 0
-	time     dword 0
+MSG STRUCT
+	hwnd     QWORD 0
+	message  DWORD 0
+	wParam   QWORD 0
+	lParam   QWORD 0
+	time     DWORD 0
 	pt       POINT {}
-	lPrivate dword 0
-MSG ends
+	lPrivate DWORD 0
+MSG ENDS
 
-extern VirtualAlloc     : proc
-extern VirtualFree      : proc
-extern GetModuleHandleA : proc
-extern RegisterClassExA : proc
-extern UnregisterClassA : proc
-extern DefWindowProcA   : proc
-extern CreateWindowExA  : proc
-extern PeekMessageA     : proc
-extern LoadCursorA      : proc
-extern LoadIconA        : proc
-extern TranslateMessage : proc
-extern DispatchMessageA : proc
-extern ShowWindow       : proc
-extern UpdateWindow     : proc
-extern DestroyWindow    : proc
+EXTERN VirtualAlloc     : PROC
+EXTERN VirtualFree      : PROC
+EXTERN GetModuleHandleA : PROC
+EXTERN RegisterClassExA : PROC
+EXTERN UnregisterClassA : PROC
+EXTERN DefWindowProcA   : PROC
+EXTERN CreateWindowExA  : PROC
+EXTERN PeekMessageA     : PROC
+EXTERN LoadCursorA      : PROC
+EXTERN LoadIconA        : PROC
+EXTERN TranslateMessage : PROC
+EXTERN DispatchMessageA : PROC
+EXTERN ShowWindow       : PROC
+EXTERN UpdateWindow     : PROC
+EXTERN DestroyWindow    : PROC
 
 ENDIF ; __CORE_WIN32_API
