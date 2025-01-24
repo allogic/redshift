@@ -153,11 +153,7 @@ END_FUNCTION_DEFINITION context_create
 ; ### Context Poll Events
 ; #################################################################
 
-; TODO: Why cant this function be marked and zoned..?
-
-context_poll_events PROC
-
-	FUNCTION_PROLOGUE
+BEGIN_FUNCTION_DEFINITION context_poll_events "context_poll_events"
 
 	; Peek next message
 	push      PM_REMOVE             ; [ARG4] wRemoveMsg
@@ -185,11 +181,7 @@ context_poll_events PROC
 
 no_message_available:
 
-	FUNCTION_EPILOGUE
-
-	ret
-
-context_poll_events ENDP
+END_FUNCTION_DEFINITION context_poll_events
 
 ; #################################################################
 ; ### Context Destroy
